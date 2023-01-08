@@ -1,0 +1,61 @@
+package pl.dawidgorecki.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import pl.dawidgorecki.model.Task;
+import pl.dawidgorecki.repository.TaskRepository;
+
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+public class TaskController {
+    private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
+    private final TaskRepository taskRepository;
+
+    public TaskController(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
+    }
+
+    @GetMapping(value = "/tasks", params = {"!page", "!size", "!sort"})
+    ResponseEntity<List<Task>> readAllTasks() {
+        logger.warn("Exposing all tasks!");
+        return ResponseEntity.ok(taskRepository.findAll());
+    }
+
+    @GetMapping(value = "/tasks")
+    ResponseEntity<List<Task>> readAllTasks(Pageable pageable) {
+        logger.warn("Custom pager");
+        Page<Task> page = taskRepository.findAll(pageable);
+        return ResponseEntity.ok(page.getContent());
+    }
+
+    @PutMapping("tasks/{id}")
+    ResponseEntity<Void> updateTask(@PathVariable int id, @RequestBody @Valid Task toUpdate) {
+        if (!taskRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        toUpdate.setId(id);
+        taskRepository.save(toUpdate);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/tasks/{id}")
+    ResponseEntity<Task> getTask(@PathVariable int id) {
+        Optional<Task> task = taskRepository.findById(id);
+        return ResponseEntity.of(task);
+    }
+
+    @PostMapping("/tasks")
+    ResponseEntity<Task> createTask(@RequestBody @Valid Task toCreate) {
+        Task task = taskRepository.save(toCreate);
+        return ResponseEntity.created(URI.create("/tasks/" + task.getId())).body(task);
+    }
+}
