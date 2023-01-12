@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.dawidgorecki.model.Task;
 import pl.dawidgorecki.repository.TaskRepository;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -36,14 +37,14 @@ public class TaskController {
         return ResponseEntity.ok(page.getContent());
     }
 
+    @Transactional
     @PutMapping("tasks/{id}")
-    ResponseEntity<Void> updateTask(@PathVariable int id, @RequestBody @Valid Task toUpdate) {
+    public ResponseEntity<Void> updateTask(@PathVariable int id, @RequestBody @Valid Task toUpdate) {
         if (!taskRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
 
-        toUpdate.setId(id);
-        taskRepository.save(toUpdate);
+        taskRepository.findById(id).ifPresent(t -> t.updateFrom(toUpdate));
         return ResponseEntity.noContent().build();
     }
 
@@ -57,5 +58,18 @@ public class TaskController {
     ResponseEntity<Task> createTask(@RequestBody @Valid Task toCreate) {
         Task task = taskRepository.save(toCreate);
         return ResponseEntity.created(URI.create("/tasks/" + task.getId())).body(task);
+    }
+
+
+    @Transactional
+    @PatchMapping("tasks/{id}")
+    public ResponseEntity<Void> toggleTask(@PathVariable int id) {
+        if (!taskRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        taskRepository.findById(id).ifPresent(t -> t.setDone(!t.isDone()));
+
+        return ResponseEntity.noContent().build();
     }
 }

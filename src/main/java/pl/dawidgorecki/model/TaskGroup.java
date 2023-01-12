@@ -3,22 +3,21 @@ package pl.dawidgorecki.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "tasks")
-public class Task {
+@Table(name = "task_groups")
+public class TaskGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
-    @NotBlank(message = "Task description must not be empty")
+    @NotBlank(message = "Task group's description must not be empty")
     private String description;
     private boolean done;
-    private LocalDateTime deadline;
 
-    @ManyToOne
-    @JoinColumn(name = "task_group_id")
-    private TaskGroup group;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "group")
+    private List<Task> tasks;
 
     @Embedded
     private Auditable audit = new Auditable();
@@ -47,22 +46,11 @@ public class Task {
         this.done = done;
     }
 
-    public LocalDateTime getDeadline() {
-        return deadline;
+    public List<Task> getTasks() {
+        return tasks;
     }
 
-    public void setDeadline(LocalDateTime deadline) {
-        this.deadline = deadline;
-    }
-
-    public TaskGroup getGroup() {
-        return group;
-    }
-
-    public void updateFrom(final Task source) {
-        description = source.description;
-        done = source.done;
-        deadline = source.deadline;
-        group = source.group;
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 }
