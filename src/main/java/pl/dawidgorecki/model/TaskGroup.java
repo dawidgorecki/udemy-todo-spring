@@ -19,8 +19,15 @@ public class TaskGroup {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "group")
     private List<Task> tasks;
 
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project;
+
     @Embedded
     private Auditable audit = new Auditable();
+
+    public TaskGroup() {
+    }
 
     public Integer getId() {
         return id;
@@ -52,5 +59,13 @@ public class TaskGroup {
 
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }

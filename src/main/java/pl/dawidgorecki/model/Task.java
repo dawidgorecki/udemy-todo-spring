@@ -16,6 +16,9 @@ public class Task {
     private boolean done;
     private LocalDateTime deadline;
 
+    public Task() {
+    }
+
     @ManyToOne
     @JoinColumn(name = "task_group_id")
     private TaskGroup group;
