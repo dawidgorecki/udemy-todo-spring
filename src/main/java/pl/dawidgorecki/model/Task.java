@@ -16,15 +16,20 @@ public class Task {
     private boolean done;
     private LocalDateTime deadline;
 
-    public Task() {
-    }
-
     @ManyToOne
     @JoinColumn(name = "task_group_id")
     private TaskGroup group;
 
     @Embedded
     private Auditable audit = new Auditable();
+
+    public Task() {
+    }
+
+    public Task(String description, LocalDateTime deadline) {
+        this.description = description;
+        this.deadline = deadline;
+    }
 
     public Integer getId() {
         return id;

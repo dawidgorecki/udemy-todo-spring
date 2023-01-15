@@ -1,7 +1,6 @@
 package pl.dawidgorecki.repository;
 
 import pl.dawidgorecki.model.Project;
-import pl.dawidgorecki.model.TaskGroup;
 
 import java.util.List;
 import java.util.Optional;
