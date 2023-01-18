@@ -1,7 +1,5 @@
 package pl.dawidgorecki.logic;
 
-import org.springframework.stereotype.Service;
-import pl.dawidgorecki.TaskConfigurationProperties;
 import pl.dawidgorecki.model.TaskGroup;
 import pl.dawidgorecki.model.projection.GroupReadModel;
 import pl.dawidgorecki.model.projection.GroupWriteModel;
@@ -11,7 +9,6 @@ import pl.dawidgorecki.repository.TaskRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
 public class TaskGroupService {
     private TaskGroupRepository repository;
     private TaskRepository taskRepository;
@@ -41,5 +38,6 @@ public class TaskGroupService {
                 .orElseThrow(() -> new IllegalArgumentException("Group with given id not found"));
 
         taskGroup.setDone(!taskGroup.isDone());
+        repository.save(taskGroup);
     }
 }

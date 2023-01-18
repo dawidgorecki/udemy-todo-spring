@@ -1,6 +1,5 @@
 package pl.dawidgorecki.logic;
 
-import org.springframework.stereotype.Service;
 import pl.dawidgorecki.TaskConfigurationProperties;
 import pl.dawidgorecki.model.Project;
 import pl.dawidgorecki.model.Task;
@@ -13,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
 public class ProjectService {
     private ProjectRepository projectRepository;
     private TaskGroupRepository groupRepository;
@@ -45,12 +43,12 @@ public class ProjectService {
                     taskGroup.setProject(project);
                     taskGroup.setTasks(
                             project.getSteps().stream()
-                                    .map(s -> new Task(s.getDescription(), deadline.minusDays(s.getDaysToDeadline())))
+                                    .map(s -> new Task(s.getDescription(), deadline.plusDays(s.getDaysToDeadline())))
                                     .collect(Collectors.toList())
                     );
 
-                    return taskGroup;
-                }).orElseThrow(() -> new IllegalArgumentException("Project with given if not found"));
+                    return groupRepository.save(taskGroup);
+                }).orElseThrow(() -> new IllegalArgumentException("Project with given id not found"));
 
         return new GroupReadModel(result);
     }
