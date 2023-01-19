@@ -22,4 +22,6 @@ public interface TaskRepository {
     boolean existsById(Integer id);
 
     boolean existsByDoneIsFalseAndGroup_Id(Integer groupId);
+
+    List<Task> readAllByGroup_Id(Integer groupId);
 }

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import pl.dawidgorecki.model.Task;
 import pl.dawidgorecki.repository.TaskRepository;
 
+import java.util.List;
+
 @Repository
 public interface SqlTaskRepository extends TaskRepository, JpaRepository<Task, Integer> {
     @Override
@@ -15,4 +17,7 @@ public interface SqlTaskRepository extends TaskRepository, JpaRepository<Task, I
 
     @Override
     boolean existsByDoneIsFalseAndGroup_Id(Integer groupId);
+
+    @Override
+    List<Task> readAllByGroup_Id(Integer groupId);
 }

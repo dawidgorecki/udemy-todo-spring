@@ -24,7 +24,8 @@ public class TaskGroupService {
     }
 
     public List<GroupReadModel> readAll() {
-        return repository.findAll().stream()
+        List<TaskGroup> all = repository.findAll();
+        return all.stream()
                 .map(GroupReadModel::new)
                 .collect(Collectors.toList());
     }
