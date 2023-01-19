@@ -47,4 +47,14 @@ public class TaskGroupController {
     public ResponseEntity<List<Task>> readAllTasksFromGroup(@PathVariable int id) {
         return ResponseEntity.ok(repository.readAllByGroup_Id(id));
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    ResponseEntity<Void> handleIllegalArgumentException(IllegalArgumentException e) {
+        return ResponseEntity.notFound().build();
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    ResponseEntity<String> handleIllegalStateException(IllegalStateException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
 }
