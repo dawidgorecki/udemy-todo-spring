@@ -7,3 +7,9 @@ spring:
     url: jdbc:h2:file:./tododb
     username: root
     password: pass
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

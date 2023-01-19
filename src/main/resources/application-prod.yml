@@ -6,3 +6,9 @@ spring:
     url: jdbc:h2:mem:tododb
     username: root
     password: pass
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
