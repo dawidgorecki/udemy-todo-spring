@@ -29,7 +29,7 @@ class ProjectServiceTest {
         var mockConfig = configurationReturning(false);
         var mockGroupRepository = groupRepositoryReturning(true);
 
-        var service = new ProjectService(null, mockGroupRepository, mockConfig);
+        var service = new ProjectService(null, mockGroupRepository, mockConfig, null);
 
         // when
         var exception = catchThrowable(() -> service.createGroup(0, LocalDateTime.now()));
@@ -49,7 +49,7 @@ class ProjectServiceTest {
         var mockRepository = mock(ProjectRepository.class);
         when(mockRepository.findById(anyInt())).thenReturn(Optional.empty());
 
-        var service = new ProjectService(mockRepository, mockGroupRepository, mockConfig);
+        var service = new ProjectService(mockRepository, mockGroupRepository, mockConfig, null);
 
         // when
         var exception = catchThrowable(() -> service.createGroup(0, LocalDateTime.now()));
@@ -68,7 +68,7 @@ class ProjectServiceTest {
         var mockRepository = mock(ProjectRepository.class);
         when(mockRepository.findById(anyInt())).thenReturn(Optional.empty());
 
-        var service = new ProjectService(mockRepository, null, mockConfig);
+        var service = new ProjectService(mockRepository, null, mockConfig, null);
 
         // when
         var exception = catchThrowable(() -> service.createGroup(0, LocalDateTime.now()));
@@ -89,7 +89,8 @@ class ProjectServiceTest {
         when(mockRepository.findById(anyInt())).thenReturn(Optional.of(project));
 
         var groupRepository = new InMemoryTaskGroupRepository();
-        var service = new ProjectService(mockRepository, groupRepository, mockConfig);
+        var taskGroupService = new TaskGroupService(groupRepository, null);
+        var service = new ProjectService(mockRepository, groupRepository, mockConfig, taskGroupService);
 
         int countBefore = groupRepository.count();
         // when
