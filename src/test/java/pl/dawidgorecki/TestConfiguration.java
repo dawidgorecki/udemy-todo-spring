@@ -24,6 +24,7 @@ public class TestConfiguration {
         result.setDriverClassName("org.h2.Driver");
         return result;
     }
+
     @Bean
     @Profile("integration")
     @Primary
@@ -48,7 +49,11 @@ public class TestConfiguration {
 
             @Override
             public Task save(Task entity) {
-                return tasks.put(tasks.size() + 1, entity);
+                int key = tasks.size() + 1;
+                tasks.put(key, entity);
+                Task task = tasks.get(key);
+                task.setId(key);
+                return task;
             }
 
             @Override
