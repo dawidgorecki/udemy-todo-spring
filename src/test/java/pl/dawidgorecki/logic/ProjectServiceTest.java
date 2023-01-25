@@ -163,13 +163,13 @@ class ProjectServiceTest {
         var result = mock(Project.class);
         when(result.getDescription()).thenReturn(description);
 
-        List<ProjectStep> steps = daysToDeadline.stream()
+        Set<ProjectStep> steps = daysToDeadline.stream()
                 .map(days -> {
                     var step = mock(ProjectStep.class);
                     when(step.getDescription()).thenReturn("Step");
                     when(step.getDaysToDeadline()).thenReturn(days);
                     return step;
-                }).collect(Collectors.toList());
+                }).collect(Collectors.toSet());
 
         when(result.getSteps()).thenReturn(steps);
         return result;

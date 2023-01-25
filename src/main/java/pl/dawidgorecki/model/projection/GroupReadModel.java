@@ -5,11 +5,11 @@ import pl.dawidgorecki.model.TaskGroup;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class GroupReadModel {
-    private int id;
+    private Integer id;
     private String description;
     // Deadline from the latest task in group
     private LocalDateTime deadline;
@@ -20,6 +20,7 @@ public class GroupReadModel {
         description = source.getDescription();
         source.getTasks().stream()
                 .map(Task::getDeadline)
+                .filter(Objects::nonNull)
                 .max(LocalDateTime::compareTo)
                 .ifPresent(date -> deadline = date);
 

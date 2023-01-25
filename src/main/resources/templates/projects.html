@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://unpkg.com/awsm.css/dist/awsm.min.css">
+    <title>Todo App: projects</title>
+    <style>
+        .fieldError {
+            border: 1px solid red !important;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <h1 th:if="${message != null}" th:text="${message}"></h1>
+    <dl th:each="project : ${projects}">
+        <dt th:text="${project.description}">...</dt>
+        <dd>
+            <ul>
+                <li th:each="step : ${project.steps}"
+                    th:text="${step.description} + ' ' + ${step.daysToDeadline} + 'dni'">...
+                </li>
+            </ul>
+            <form th:action="@{/projects/{id}(id=${project.id})}" method="post">
+                <label for="deadline">Deadline</label>
+                <input type="datetime-local" name="deadline" id="deadline" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}">
+                <button type="submit">Utwórz taski</button>
+            </form>
+        </dd>
+    </dl>
+    <fieldset>
+        <legend>Nowy projekt</legend>
+        <form th:action="@{/projects}" method="post" th:object="${project}">
+            <p th:if="${#fields.hasAnyErrors()}" th:errors="*{all}">Incorrect date</p>
+
+            <label for="description">Opis</label>
+            <input type="text" th:field="*{description}" id="description" th:errorclass="fieldError">
+            <fieldset th:each="step,stats : *{steps}">
+                <legend th:text="'Krok' + ${stats.index + 1}"></legend>
+                <label for="stepDescription">Opis</label>
+                <input type="text" th:field="*{steps[__${stats.index}__].description}" id="stepDescription" th:errorclass="fieldError">
+
+                <label for="stepDaysToDeadline">Dni do końca projektu</label>
+                <input type="number" th:field="*{steps[__${stats.index}__].daysToDeadline}" id="stepDaysToDeadline" th:errorclass="fieldError">
+            </fieldset>
+            <div style="margin-top: 10px">
+                <button type="submit" name="addStep">+</button>
+            </div>
+            <p>
+                <button type="submit">Dodaj</button>
+                <button type="reset">Wyczyść</button>
+            </p>
+        </form>
+    </fieldset>
+
+
+</main>
+</body>
+</html>

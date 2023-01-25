@@ -3,6 +3,7 @@ package pl.dawidgorecki.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "projects")
@@ -19,7 +20,7 @@ public class Project {
     private List<TaskGroup> groups;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    private List<ProjectStep> steps;
+    private Set<ProjectStep> steps;
 
     public Integer getId() {
         return id;
@@ -33,7 +34,7 @@ public class Project {
         return description;
     }
 
-    void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -41,15 +42,15 @@ public class Project {
         return groups;
     }
 
-    void setGroups(List<TaskGroup> groups) {
+    public void setGroups(List<TaskGroup> groups) {
         this.groups = groups;
     }
 
-    public List<ProjectStep> getSteps() {
+    public Set<ProjectStep> getSteps() {
         return steps;
     }
 
-    void setSteps(List<ProjectStep> steps) {
+    public void setSteps(Set<ProjectStep> steps) {
         this.steps = steps;
     }
 }

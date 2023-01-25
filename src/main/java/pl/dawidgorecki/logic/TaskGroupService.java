@@ -1,5 +1,6 @@
 package pl.dawidgorecki.logic;
 
+import pl.dawidgorecki.model.Project;
 import pl.dawidgorecki.model.TaskGroup;
 import pl.dawidgorecki.model.projection.GroupReadModel;
 import pl.dawidgorecki.model.projection.GroupWriteModel;
@@ -19,7 +20,11 @@ public class TaskGroupService {
     }
 
     public GroupReadModel createGroup(GroupWriteModel source) {
-        TaskGroup group = repository.save(source.toGroup());
+        return createGroup(source, null);
+    }
+
+    public GroupReadModel createGroup(GroupWriteModel source, Project project) {
+        TaskGroup group = repository.save(source.toGroup(project));
         return new GroupReadModel(group);
     }
 
@@ -41,4 +46,6 @@ public class TaskGroupService {
         taskGroup.setDone(!taskGroup.isDone());
         repository.save(taskGroup);
     }
+
+
 }
