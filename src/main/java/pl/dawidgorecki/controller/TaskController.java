@@ -2,6 +2,7 @@ package pl.dawidgorecki.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +21,11 @@ import java.util.Optional;
 public class TaskController {
     private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
     private final TaskRepository taskRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public TaskController(TaskRepository taskRepository) {
+    public TaskController(TaskRepository taskRepository, ApplicationEventPublisher eventPublisher) {
         this.taskRepository = taskRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @GetMapping(params = {"!page", "!size", "!sort"})
@@ -69,7 +72,9 @@ public class TaskController {
             return ResponseEntity.notFound().build();
         }
 
-        taskRepository.findById(id).ifPresent(t -> t.setDone(!t.isDone()));
+        taskRepository.findById(id)
+                .map(Task::toggle)
+                .ifPresent(eventPublisher::publishEvent);
 
         return ResponseEntity.noContent().build();
     }
