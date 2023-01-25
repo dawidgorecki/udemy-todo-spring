@@ -1,7 +1,7 @@
 package pl.dawidgorecki.controller;
 
 
-import org.springframework.format.annotation.DateTimeFormat;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -13,18 +13,16 @@ import pl.dawidgorecki.model.Task;
 import pl.dawidgorecki.model.projection.GroupReadModel;
 import pl.dawidgorecki.model.projection.GroupTaskWriteModel;
 import pl.dawidgorecki.model.projection.GroupWriteModel;
-import pl.dawidgorecki.model.projection.ProjectWriteModel;
 import pl.dawidgorecki.repository.TaskRepository;
 
-import javax.print.attribute.standard.Media;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
 @RequestMapping("/groups")
+@IllegalExceptionProcessing
 public class TaskGroupController {
     private final TaskGroupService service;
     private final TaskRepository repository;
@@ -49,6 +47,7 @@ public class TaskGroupController {
         return ResponseEntity.noContent().build();
     }
 
+    @Timed(value = "project.create.group", histogram = true, percentiles = {0.5, 0.95, 0.99})
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<GroupReadModel> createGroup(@RequestBody GroupWriteModel toCreate) {
@@ -73,6 +72,7 @@ public class TaskGroupController {
         current.getTasks().add(new GroupTaskWriteModel());
         return "groups";
     }
+
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String addGroup(
             @Valid @ModelAttribute("group") GroupWriteModel current,
@@ -88,16 +88,6 @@ public class TaskGroupController {
         model.addAttribute("groups", getGroups());
         model.addAttribute("message", "Dodano grupę");
         return "groups";
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    ResponseEntity<Void> handleIllegalArgumentException(IllegalArgumentException e) {
-        return ResponseEntity.notFound().build();
-    }
-
-    @ExceptionHandler(IllegalStateException.class)
-    ResponseEntity<String> handleIllegalStateException(IllegalStateException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
     }
 
     @ModelAttribute("groups")
