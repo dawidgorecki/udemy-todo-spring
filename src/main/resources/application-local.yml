@@ -8,6 +8,19 @@ spring:
     username: root
     password: pass
 
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: todo-spring-app
+            authorization-grant-type: authorization_code
+            scope: openid
+
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8180/realms/TodoApp
+
 management:
   endpoints:
     web:
